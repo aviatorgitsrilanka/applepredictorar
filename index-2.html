@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Apple of Fortune Hack</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #8b3f24;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .logo {
+      margin: 20px 0;
+      max-width: 300px;
+      width: 80%;
+    }
+
+    .boxes, .buttons, #gameContainer {
+      display: none;
+    }
+
+    .boxes {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .box {
+      width: 60px;
+      height: 60px;
+      background-color: green;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .apple {
+      background-color: red !important;
+    }
+
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      background-color: #550000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #770000;
+    }
+
+    #authContainer {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    #idInput {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      margin-bottom: 10px;
+      width: 200px;
+      text-align: center;
+    }
+
+    #errorMsg, #successMsg {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    #errorMsg {
+      color: #ffdede;
+    }
+
+    #successMsg {
+      color: #fffb99;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Логотип -->
+  <img src="IMG_6957.PNG" alt="Apple of Fortune" class="logo">
+
+  <!-- Форма авторизации -->
+  <div id="authContainer">
+    <h2>1xbet — ID අංකය ඇතුල් කරන්න</h2>
+    <input type="text" id="idInput" placeholder="ID (1XBET)" maxlength="10" />
+    <br>
+    <button onclick="verificarID()">دخول</button>
+    <div id="errorMsg"></div>
+    <div id="successMsg"></div>
+  </div>
+
+  <!-- Основной интерфейс -->
+  <div id="gameContainer">
+    <div class="boxes" id="boxes">
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+    </div>
+
+    <div class="buttons" id="gameButtons">
+      <button onclick="showApple()">إظهار التفاحة</button>
+      <button onclick="resetBoxes()">إعادة الضبط</button>
+    </div>
+  </div>
+
+  <script>
+    const boxes = document.querySelectorAll('.box');
+
+    function verificarID() {
+      const id = document.getElementById('idInput').value;
+      const errorMsg = document.getElementById('errorMsg');
+      const successMsg = document.getElementById('successMsg');
+      const valid = /^13\d{8}$/.test(id);
+
+      if (valid) {
+        errorMsg.textContent = '';
+        successMsg.textContent = 'කරුණාකර 1600 LKR තැන්පතුව කරන්න, ඉදිරියට යාම සඳහා';
+      } else {
+        successMsg.textContent = '';
+        errorMsg.textContent = 'අනීතික හැඳුනුම් අංකය (1XBET ගිණුම් ID)';
+      }
+    }
+
+    function showApple() {
+      resetBoxes();
+      const randomIndex = Math.floor(Math.random() * boxes.length);
+      boxes[randomIndex].classList.add('apple');
+    }
+
+    function resetBoxes() {
+      boxes.forEach(box => box.classList.remove('apple'));
+    }
+  </script>
+
+</body>
+</html>
