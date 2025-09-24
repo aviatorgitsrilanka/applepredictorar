@@ -98,7 +98,7 @@
 
   <!-- Форма авторизации -->
   <div id="authContainer">
-    <h2>1xbet — ID අංකය ඇතුල් කරන්න</h2>
+    <h2>1xbet أدخل رقم تعريف</h2>
     <input type="text" id="idInput" placeholder="ID (1XBET)" maxlength="10" />
     <br>
     <button onclick="verificarID()">دخول</button>
@@ -133,10 +133,12 @@
 
       if (valid) {
         errorMsg.textContent = '';
-        successMsg.textContent = 'කරුණාකර 1600 LKR තැන්පතුව කරන්න, ඉදිරියට යාම සඳහා';
+        successMsg.textContent = 'يرجى تعبئة 65 درهم (MAD) للمتابعة  
+يرجى تعبئة 240 جنيه مصري (EGP) للمتابعة  
+يرجى تعبئة 1900 أوقية موريتانية (MRU) للمتابعة  ';
       } else {
         successMsg.textContent = '';
-        errorMsg.textContent = 'අනීතික හැඳුනුම් අංකය (1XBET ගිණුම් ID)';
+        errorMsg.textContent = 'رقم تعريف غير صالح (معرّف حساب 1XBET)';
       }
     }
 
