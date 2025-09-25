@@ -3,163 +3,321 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Apple of Fortune Hack</title>
+  <title>Apple of Fortune Hack — v3</title>
   <style>
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      background-color: #8b3f24;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
+    :root{
+      --bg:#8b3f24; --btn:#550000; --btnH:#770000; --ok:#fffb99; --err:#ffdede;
+      --card:rgba(255,255,255,0.08); --online:#a7ffb0;
     }
-
-    .logo {
-      margin: 20px 0;
-      max-width: 300px;
-      width: 80%;
+    *{box-sizing:border-box}
+    body{
+      margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Noto Kufi Arabic",sans-serif;
+      background-color:var(--bg);color:#fff;display:flex;flex-direction:column;align-items:center;padding:20px;gap:16px;
     }
-
-    .boxes {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
+    .wrap{width:min(920px,100%);display:flex;flex-direction:column;gap:16px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--card);padding:10px 14px;border-radius:10px}
+    .logo{height:38px}
+    .online{font-weight:700;color:var(--online)}
+    .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .card{background:var(--card);padding:16px;border-radius:14px}
+    button,.btn{
+      padding:10px 14px;background:var(--btn);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px
     }
-
-    .box {
-      width: 60px;
-      height: 60px;
-      background-color: green;
-      border-radius: 5px;
-      transition: background-color 0.3s;
+    button:hover,.btn:hover{background:var(--btnH)}
+    .seg{display:flex;gap:8px;flex-wrap:wrap}
+    .seg button{background:#ffffff10;border:1px solid #ffffff33}
+    .seg button.active{background:#ffffff28;border-color:#ffffff77}
+    input#idInput{
+      padding:12px 14px;font-size:16px;border-radius:10px;border:2px solid transparent;width:240px;text-align:center;outline:none
     }
-
-    .apple {
-      background-color: red !important;
-    }
-
-    button {
-      margin: 5px;
-      padding: 10px 20px;
-      background-color: #550000;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #770000;
-    }
-
-    #authContainer {
-      text-align: center;
-      margin-top: 30px;
-    }
-
-    #idInput {
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 5px;
-      border: none;
-      margin-bottom: 10px;
-      width: 200px;
-      text-align: center;
-    }
-
-    #errorMsg, #successMsg {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-
-    #errorMsg {
-      color: #ffdede;
-    }
-
-    #successMsg {
-      color: #fffb99;
-      white-space: pre-line; /* чтобы переносы строк отображались */
-    }
-
-    #gameContainer {
-      display: none;
-      text-align: center;
-    }
+    input#idInput.err{border-color:#ffb3b3;background:#3a0000}
+    #errorMsg{color:var(--err);font-weight:700;min-height:22px}
+    #successBox{display:none}
+    #successMsg{color:var(--ok);font-weight:700;white-space:pre-line;border:1px dashed #fff4;padding:10px;border-radius:10px}
+    .progress{width:100%;height:10px;background:#ffffff22;border-radius:999px;overflow:hidden}
+    .bar{height:100%;width:0;background:linear-gradient(90deg,#ffd36a,#fff1a6);transition:width .25s ease}
+    .meta{display:flex;justify-content:space-between;gap:12px;align-items:center}
+    .boxes{display:flex;gap:10px;margin:14px 0;flex-wrap:wrap;justify-content:center}
+    .box{width:60px;height:60px;background:green;border-radius:8px;transition:background-color .25s}
+    .apple{background:red!important}
+    details{background:#00000022;padding:10px;border-radius:10px}
+    summary{cursor:pointer;font-weight:700}
+    .foot{opacity:.7;text-align:center;font-size:12px}
   </style>
 </head>
 <body>
-
-  <!-- Логотип -->
-  <img src="IMG_6957.PNG" alt="Apple of Fortune" class="logo">
-
-  <!-- Форма авторизации -->
-  <div id="authContainer">
-    <h2>1xbet أدخل رقم تعريف</h2>
-    <input type="text" id="idInput" placeholder="ID (1XBET)" maxlength="10" />
-    <br>
-    <button onclick="verificarID()">دخول</button>
-    <div id="errorMsg"></div>
-    <div id="successMsg"></div>
-  </div>
-
-  <!-- Основной интерфейс -->
-  <div id="gameContainer">
-    <div class="boxes" id="boxes">
-      <div class="box"></div>
-      <div class="box"></div>
-      <div class="box"></div>
-      <div class="box"></div>
-      <div class="box"></div>
+  <div class="wrap">
+    <!-- TOP -->
+    <div class="topbar card">
+      <div class="row">
+        <img src="IMG_6957.PNG" alt="Apple of Fortune" class="logo">
+        <div class="online" id="onlineText">متصلون الآن: <span id="onlineNum">27</span></div>
+      </div>
+      <div class="row">
+        <div class="seg" id="langSeg">
+          <button data-lang="ar" class="active">AR</button>
+          <button data-lang="en">EN</button>
+        </div>
+        <a id="tgBtnTop" class="btn" href="https://t.me/TELEGRAM_HANDLE" target="_blank" rel="noopener">💬 دعم تيليجرام</a>
+      </div>
     </div>
 
-    <div class="buttons" id="gameButtons">
-      <button onclick="showApple()">إظهار التفاحة</button>
-      <button onclick="resetBoxes()">إعادة الضبط</button>
+    <!-- AUTH -->
+    <div class="card" id="authCard">
+      <h2 id="title">1xbet أدخل رقم تعريف</h2>
+      <div class="row" style="justify-content:center">
+        <input type="text" id="idInput" placeholder="ID (1XBET)" maxlength="12" inputmode="numeric" />
+        <button id="copyIdBtn" title="Copy/نسخ">📋</button>
+      </div>
+      <div class="row" style="justify-content:center">
+        <button id="loginBtn">دخول</button>
+        <a id="payBtn" class="btn" href="https://affpa.top/L?tag=d_4206914m_62287c_&site=4206914&ad=62287&r=registration" target="_blank" rel="noopener">💳 دفع</a>
+        <button id="tgBtnMid" onclick="openTelegram()">Telegram</button>
+      </div>
+      <div id="errorMsg"></div>
+
+      <!-- SUCCESS -->
+      <div id="successBox">
+        <div class="meta" style="margin:6px 0 10px">
+          <div class="progress"><div class="bar" id="bar"></div></div>
+          <div class="sub"><span id="progressText">0%</span></div>
+        </div>
+
+        <div id="successMsg"></div>
+
+        <div class="meta" style="margin-top:10px">
+          <div class="sub">⏳ <span id="leftTimeLbl">الوقت المتبقي</span>: <span id="countdown">15:00</span></div>
+          <button id="copyPayBtn" title="Copy/نسخ">📋 <span id="copyPayLbl">نسخ التعليمات</span></button>
+        </div>
+
+        <div class="row" style="margin-top:8px;justify-content:center">
+          <a class="btn" onclick="openTelegram()">✅ <span id="openTgLbl">فتح تيليجرام الآن</span></a>
+          <a class="btn" id="payBtn2" href="https://affpa.top/L?tag=d_4206914m_62287c_&site=4206914&ad=62287&r=registration" target="_blank" rel="noopener">💳 <span id="payNowLbl">انتقال للدفع</span></a>
+        </div>
+      </div>
     </div>
+
+    <!-- GAME -->
+    <div class="card" id="gameContainer" style="display:none">
+      <div id="gameTitle" style="text-align:center;font-weight:700;margin-bottom:8px">واجهة الاختبار</div>
+      <div class="boxes" id="boxes">
+        <div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div>
+      </div>
+      <div class="row" id="gameButtons" style="justify-content:center">
+        <button id="showBtn">إظهار التفاحة</button>
+        <button id="resetBtn">إعادة الضبط</button>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="card">
+      <details>
+        <summary id="faq1">لماذا نطلب تعبئة الرصيد؟</summary>
+        <div class="sub" id="faq1txt">التعبئة ضرورية لتفعيل الوصول للإشارات. بعد التفعيل تحصل على الإشارات تلقائياً.</div>
+      </details>
+      <details>
+        <summary id="faq2">كم يستغرق التفعيل؟</summary>
+        <div class="sub" id="faq2txt">عادة فورياً بعد التعبئة. في حالات نادرة قد يستغرق حتى 5 دقائق.</div>
+      </details>
+    </div>
+
+    <div class="foot" id="foot">© 2025 — Apple of Fortune helper</div>
   </div>
 
   <script>
+    // ===== Config =====
+    const TELEGRAM_URL = "https://t.me/TELEGRAM_HANDLE"; // замените на свой
+    const PAY_URL = "https://affpa.top/L?tag=d_4206914m_62287c_&site=4206914&ad=62287&r=registration";
+    const COUNTDOWN_START_SEC = 15 * 60;
+
+    // Словари i18n
+    const I18N = {
+      ar: {
+        dir:"rtl", online:"متصلون الآن: ", title:"1xbet أدخل رقم تعريف", login:"دخول",
+        pay:"💳 دفع", payNow:"انتقال للدفع", left:"الوقت المتبقي", copyInst:"نسخ التعليمات",
+        openTg:"فتح تيليجرام الآن", game:"واجهة الاختبار",
+        faq1:"لماذا نطلب تعبئة الرصيد؟",
+        faq1txt:"التعبئة ضرورية لتفعيل الوصول للإشارات. بعد التفعيل تحصل على الإشارات تلقائياً.",
+        faq2:"كم يستغرق التفعيل؟",
+        faq2txt:"عادة فورياً بعد التعبئة. في حالات نادرة قد يستغرق حتى 5 دقائق.",
+        allText:
+`للمغرب: يرجى تعبئة 65 درهم (MAD) للمتابعة
+لمصر: يرجى تعبئة 240 جنيه مصري (EGP) للمتابعة
+لموريتانيا: يرجى تعبئة 1900 أوقية موريتانية (MRU) للمتابعة`
+      },
+      en: {
+        dir:"ltr", online:"Online now: ", title:"Enter your 1xBet ID", login:"Login",
+        pay:"💳 Pay", payNow:"Go to payment", left:"Time left", copyInst:"Copy instructions",
+        openTg:"Open Telegram now", game:"Test interface",
+        faq1:"Why do we require a top-up?",
+        faq1txt:"A top-up is required to activate signal access. After activation, signals arrive automatically.",
+        faq2:"How long does activation take?",
+        faq2txt:"Usually instant after payment. In rare cases up to 5 minutes.",
+        allText:
+`For Morocco: please top up 65 MAD to continue
+For Egypt: please top up 240 EGP to continue
+For Mauritania: please top up 1900 MRU to continue`
+      }
+    };
+
+    // Elements
+    const onlineText = document.getElementById('onlineText');
+    const onlineNum = document.getElementById('onlineNum');
+    const langSeg = document.getElementById('langSeg');
+    const title = document.getElementById('title');
+    const idInput = document.getElementById('idInput');
+    const copyIdBtn = document.getElementById('copyIdBtn');
+    const loginBtn = document.getElementById('loginBtn');
+    const payBtn = document.getElementById('payBtn');
+    const payBtn2 = document.getElementById('payBtn2');
+    const errorMsg = document.getElementById('errorMsg');
+    const successBox = document.getElementById('successBox');
+    const successMsg = document.getElementById('successMsg');
+    const bar = document.getElementById('bar');
+    const progressText = document.getElementById('progressText');
+    const countdownEl = document.getElementById('countdown');
+    const copyPayBtn = document.getElementById('copyPayBtn');
+    const leftTimeLbl = document.getElementById('leftTimeLbl');
+    const copyPayLbl = document.getElementById('copyPayLbl');
+    const openTgLbl = document.getElementById('openTgLbl');
+    const gameContainer = document.getElementById('gameContainer');
+    const gameTitle = document.getElementById('gameTitle');
     const boxes = document.querySelectorAll('.box');
+    const tgBtnTop = document.getElementById('tgBtnTop');
 
-    function verificarID() {
-      const id = document.getElementById('idInput').value.trim();
-      const errorMsg = document.getElementById('errorMsg');
-      const successMsg = document.getElementById('successMsg');
+    let currentLang = localStorage.getItem('lang') || 'ar';
+    let countdownTimer = null, progressTimer = null;
 
-      // Проверка: ID должен быть от 6 до 10 цифр
-      const valid = /^\d{6,10}$/.test(id);
+    // Init
+    applyLang(currentLang);
+    onlinePulse();
+    setInterval(onlinePulse, 5000);
 
-      if (valid) {
-        errorMsg.textContent = '';
-        successMsg.textContent = 
-`يرجى تعبئة 65 درهم (MAD) للمتابعة  
-يرجى تعبئة 240 جنيه مصري (EGP) للمتابعة  
-يرجى تعبئة 1900 أوقية موريتانية (MRU) للمتابعة`;
+    // Handlers
+    langSeg.addEventListener('click', (e)=>{
+      const b = e.target.closest('button'); if(!b) return;
+      currentLang = b.dataset.lang;
+      localStorage.setItem('lang', currentLang);
+      langSeg.querySelectorAll('button').forEach(x=>x.classList.toggle('active', x.dataset.lang===currentLang));
+      applyLang(currentLang);
+    });
 
-        // показываем игру
-        document.getElementById('gameContainer').style.display = 'block';
-      } else {
-        successMsg.textContent = '';
-        errorMsg.textContent = 'رقم تعريف غير صالح';
+    copyIdBtn.addEventListener('click', ()=>{
+      const val=idInput.value.trim(); if(!val){pulse(idInput);return;}
+      navigator.clipboard?.writeText(val);
+      toast(currentLang==='ar'?'تم النسخ ✅':'Copied ✅');
+    });
+
+    loginBtn.addEventListener('click', verificarID);
+    idInput.addEventListener('keydown',(e)=>{ if(e.key==='Enter') verificarID(); });
+
+    copyPayBtn.addEventListener('click', ()=>{
+      navigator.clipboard?.writeText(I18N[currentLang].allText);
+      toast(currentLang==='ar'?'تم نسخ التعليمات ✅':'Instructions copied ✅');
+    });
+
+    document.getElementById('showBtn').addEventListener('click', showApple);
+    document.getElementById('resetBtn').addEventListener('click', resetBoxes);
+
+    // Functions
+    function applyLang(lang){
+      const t = I18N[lang];
+      document.documentElement.lang = lang;
+      document.documentElement.dir = t.dir;
+      onlineText.firstChild.nodeValue = t.online;
+      title.textContent = t.title;
+      loginBtn.textContent = t.login;
+      payBtn.textContent = t.pay;
+      payBtn2.querySelector('span').textContent = t.payNow;
+      leftTimeLbl.textContent = t.left;
+      copyPayLbl.textContent = t.copyInst;
+      openTgLbl.textContent = t.openTg;
+      gameTitle.textContent = t.game;
+      document.getElementById('faq1').textContent = t.faq1;
+      document.getElementById('faq1txt').textContent = t.faq1txt;
+      document.getElementById('faq2').textContent = t.faq2;
+      document.getElementById('faq2txt').textContent = t.faq2txt;
+      successMsg.textContent = t.allText;
+      // кнопки Telegram
+      tgBtnTop.textContent = (lang==='ar'?'💬 دعم تيليجرام':'💬 Telegram support');
+      document.getElementById('tgBtnMid').textContent = (lang==='ar'?'Telegram':'Telegram');
+      // payment links (фиксированные)
+      payBtn.href = PAY_URL;
+      payBtn2.href = PAY_URL;
+    }
+
+    function verificarID(){
+      const id = idInput.value.trim();
+      const valid = /^\d{6,12}$/.test(id);
+      localStorage.setItem('id', id);
+
+      if(valid){
+        idInput.classList.remove('err'); errorMsg.textContent = '';
+        // Показать блок успеха и текст с ВСЕМИ валютами
+        successMsg.textContent = I18N[currentLang].allText;
+        successBox.style.display = 'block';
+        startProgress();
+        startCountdown(COUNTDOWN_START_SEC);
+        gameContainer.style.display = 'block';
+      }else{
+        successBox.style.display = 'none';
+        errorMsg.textContent = (currentLang==='ar'?'رقم تعريف غير صالح':'Invalid ID');
+        idInput.classList.add('err'); pulse(idInput);
       }
     }
 
-    function showApple() {
-      resetBoxes();
-      const randomIndex = Math.floor(Math.random() * boxes.length);
-      boxes[randomIndex].classList.add('apple');
+    function startProgress(){
+      clearInterval(progressTimer);
+      let p=0; progressText.textContent='0%'; bar.style.width='0%';
+      progressTimer=setInterval(()=>{
+        p=Math.min(100, p + Math.floor(Math.random()*9)+3);
+        bar.style.width=p+'%'; progressText.textContent=p+'%';
+        if(p>=100) clearInterval(progressTimer);
+      },500);
     }
 
-    function resetBoxes() {
-      boxes.forEach(box => box.classList.remove('apple'));
+    function startCountdown(total){
+      clearInterval(countdownTimer);
+      let t=total; renderCountdown(t);
+      countdownTimer=setInterval(()=>{
+        t--; renderCountdown(t);
+        if(t<=0) clearInterval(countdownTimer);
+      },1000);
+    }
+    function renderCountdown(t){
+      const m=String(Math.floor(t/60)).padStart(2,'0');
+      const s=String(t%60).padStart(2,'0');
+      countdownEl.textContent=`${m}:${s}`;
+    }
+
+    function showApple(){
+      resetBoxes();
+      const i=Math.floor(Math.random()*boxes.length);
+      boxes[i].classList.add('apple');
+      if(navigator.vibrate) navigator.vibrate(35);
+    }
+    function resetBoxes(){ boxes.forEach(b=>b.classList.remove('apple')); }
+
+    function openTelegram(){ window.open(TELEGRAM_URL, '_blank'); }
+
+    function onlinePulse(){
+      const base = 21 + Math.floor(Math.random()*20);
+      onlineNum.textContent = base.toString();
+    }
+    function pulse(el){
+      el.animate([{transform:'scale(1)'},{transform:'scale(1.04)'},{transform:'scale(1)'}],{duration:260});
+    }
+    function toast(text){
+      const t=document.createElement('div');
+      t.textContent=text;
+      Object.assign(t.style,{
+        position:'fixed',bottom:'16px',left:'50%',transform:'translateX(-50%)',
+        background:'#000000aa',color:'#fff',padding:'10px 14px',borderRadius:'10px',
+        zIndex:9999,fontWeight:700
+      });
+      document.body.appendChild(t);
+      setTimeout(()=>t.remove(),1400);
     }
   </script>
-
 </body>
 </html>
