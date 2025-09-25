@@ -63,7 +63,9 @@
     <div class="card top">
       <div class="row">
         <img src="IMG_6957.PNG" alt="Apple of Fortune" class="logo">
-        <div class="online" id="onlineText">متصلون الآن: <span id="onlineNum">27</span></div>
+        <div class="online">
+          <span id="onlineLbl">متصلون الآن: </span><span id="onlineNum">27</span>
+        </div>
       </div>
       <div class="row">
         <div class="seg" id="langSeg">
@@ -84,7 +86,7 @@
       <div class="row" style="justify-content:center">
         <button id="loginBtn">دخول</button>
         <a id="payBtn" class="btn" href="https://affpa.top/L?tag=d_4206914m_62287c_&site=4206914&ad=62287&r=registration" target="_blank" rel="noopener">💳 دفع</a>
-        <button id="tgBtnMid" onclick="openTelegram()">Telegram</button>
+        <button id="tgBtnMid">Telegram</button>
       </div>
       <div id="errorMsg"></div>
 
@@ -103,7 +105,7 @@
         </div>
 
         <div class="row" style="margin-top:8px;justify-content:center">
-          <a class="btn" onclick="openTelegram()">✅ <span id="openTgLbl">فتح تيليجرام الآن</span></a>
+          <a class="btn" id="tgBtnBottom">✅ <span id="openTgLbl">فتح تيليجرام الآن</span></a>
           <a class="btn" id="payBtn2" href="https://affpa.top/L?tag=d_4206914m_62287c_&site=4206914&ad=62287&r=registration" target="_blank" rel="noopener">💳 <span id="payNowLbl">انتقال للدفع</span></a>
         </div>
       </div>
@@ -141,16 +143,12 @@
 
   <script>
     // ===== Config =====
-    const TELEGRAM_URL = "https://t.me/TELEGRAM_HANDLE"; // замените на свой
+    const TELEGRAM_URL = "https://t.me/TELEGRAM_HANDLE"; // ЗАМЕНИ
     const PAY_URL = "https://affpa.top/L?tag=d_4206914m_62287c_&site=4206914&ad=62287&r=registration";
     const COUNTDOWN_START_SEC = 15 * 60;
 
-    // Курсы (примерные — при необходимости обнови)
-    const RATES = {
-      USD_EGP: 50,    // 1 USD ≈ 50 EGP
-      USD_MAD: 10,    // 1 USD ≈ 10 MAD
-      USD_MRU: 40     // 1 USD ≈ 40 MRU
-    };
+    // Курсы (примерные — правь при необходимости)
+    const RATES = { USD_EGP: 50, USD_MAD: 10, USD_MRU: 40 };
 
     // i18n
     const I18N = {
@@ -186,8 +184,8 @@ For Mauritania: please top up 1900 MRU to continue`
       }
     };
 
-    // Элементы
-    const onlineText = document.getElementById('onlineText');
+    // ===== Elements (безопасно) =====
+    const onlineLbl = document.getElementById('onlineLbl');
     const onlineNum = document.getElementById('onlineNum');
     const langSeg = document.getElementById('langSeg');
     const title = document.getElementById('title');
@@ -196,6 +194,10 @@ For Mauritania: please top up 1900 MRU to continue`
     const loginBtn = document.getElementById('loginBtn');
     const payBtn = document.getElementById('payBtn');
     const payBtn2 = document.getElementById('payBtn2');
+    const tgBtnMid = document.getElementById('tgBtnMid');
+    const tgBtnBottom = document.getElementById('tgBtnBottom');
+    const tgBtnTop = document.getElementById('tgBtnTop');
+
     const errorMsg = document.getElementById('errorMsg');
     const successBox = document.getElementById('successBox');
     const successMsg = document.getElementById('successMsg');
@@ -206,9 +208,8 @@ For Mauritania: please top up 1900 MRU to continue`
     const leftTimeLbl = document.getElementById('leftTimeLbl');
     const copyPayLbl = document.getElementById('copyPayLbl');
     const openTgLbl = document.getElementById('openTgLbl');
-    const tgBtnTop = document.getElementById('tgBtnTop');
 
-    // Winners UI
+    // Winners
     const winnersTitle = document.getElementById('winnersTitle');
     const hName = document.getElementById('hName');
     const hCountry = document.getElementById('hCountry');
@@ -217,90 +218,24 @@ For Mauritania: please top up 1900 MRU to continue`
     const hEarnings = document.getElementById('hEarnings');
     const wTicker = document.getElementById('wTicker');
 
+    // ===== State =====
     let currentLang = localStorage.getItem('lang') || 'ar';
     let countdownTimer = null, progressTimer = null;
 
-    // ===== Генерация победителей =====
-    // Справочники городов
+    // ===== Data =====
     const CITIES = {
       MR: ["نواكشوط","نواذيبو","أطار","روصو","كيفه","سيلبابي"],
       EG: ["القاهرة","الجيزة","الإسكندرية","طنطا","المنصورة","أسيوط"],
       MA: ["الدار البيضاء","الرباط","مراكش","فاس","طنجة","أغادير"]
     };
-    // Имена (фамилии — распространённые арабские)
     const FIRST = ["أحمد","محمد","سالم","يوسف","عمر","سامي","حمزة","إلياس","طارق","مروان","هاشم","زيد"];
     const LAST  = ["العلوي","الشنقيطي","المصري","الفاسي","الرباطي","التمبكتي","القاهري","المراكشي","الأنصاري","إبراهيم","الحسني","المختار"];
-
-    function usdToLocal(country, usd){
-      switch(country){
-        case "MR": return Math.round(usd*RATES.USD_MRU) + " MRU";
-        case "EG": return Math.round(usd*RATES.USD_EGP) + " EGP";
-        case "MA": return Math.round(usd*RATES.USD_MAD) + " MAD";
-      }
-    }
-    function makeWinner(country){
-      const first = FIRST[Math.floor(Math.random()*FIRST.length)];
-      const last  = LAST[Math.floor(Math.random()*LAST.length)];
-      const city  = CITIES[country][Math.floor(Math.random()*CITIES[country].length)];
-
-      // депозит (локальная валюта)
-      let depositLocal;
-      if(country==="MR"){
-        // 500–1200 MRU
-        depositLocal = (Math.floor(Math.random()*8)+5)*100 + " MRU";
-      }else if(country==="EG"){
-        // 300–1200 EGP
-        depositLocal = (Math.floor(Math.random()*10)+3)*100 + " EGP";
-      }else{
-        // 100–400 MAD
-        depositLocal = (Math.floor(Math.random()*4)+1)*100 + " MAD";
-      }
-
-      // заработок: 150–300 USD → локальная валюта
-      const earnUSD = 150 + Math.floor(Math.random()*151); // 150..300
-      const earnLocal = usdToLocal(country, earnUSD);
-
-      return {
-        name: `${first} ${last}`,
-        country: country==="MR"?"موريتانيا":country==="EG"?"مصر":"المغرب",
-        city, deposit: depositLocal, earnings: earnLocal
-      };
-    }
-    function buildWinnerRow(w){
-      const row = document.createElement('div');
-      row.className='winner-row';
-      row.innerHTML = `
-        <div><b>${w.name}</b></div>
-        <div>${w.country}</div>
-        <div>${w.city}</div>
-        <div>${w.deposit}</div>
-        <div><b>${w.earnings}</b></div>
-      `;
-      return row;
-    }
-    function seedWinners(){
-      wTicker.innerHTML='';
-      const countries = ["MR","EG","MA","MR","EG","MA","MR","EG"];
-      countries.forEach(c=>{
-        const w = makeWinner(c);
-        wTicker.appendChild(buildWinnerRow(w));
-      });
-    }
-    function rotateWinners(){
-      const first = wTicker.firstElementChild;
-      if(!first) return;
-      first.animate([{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(-8px)'}],{duration:260});
-      setTimeout(()=>{
-        wTicker.removeChild(first);
-        wTicker.appendChild(buildWinnerRow(makeWinner(["MR","EG","MA"][Math.floor(Math.random()*3)])));
-      },260);
-    }
 
     // ===== Init =====
     applyLang(currentLang);
     onlinePulse(); setInterval(onlinePulse, 5000);
     const savedId = localStorage.getItem('id'); if(savedId) idInput.value = savedId;
-    seedWinners(); setInterval(rotateWinners, 2200); // «живой» тикер
+    seedWinners(); setInterval(rotateWinners, 2200);
 
     // ===== Handlers =====
     langSeg.addEventListener('click', (e)=>{
@@ -313,18 +248,17 @@ For Mauritania: please top up 1900 MRU to continue`
 
     copyIdBtn.addEventListener('click', ()=>{
       const val=idInput.value.trim(); if(!val){pulse(idInput);return;}
-      navigator.clipboard?.writeText(val);
-      toast(currentLang==='ar'?'تم النسخ ✅':'Copied ✅');
+      safeCopy(val, currentLang==='ar'?'تم النسخ ✅':'Copied ✅');
     });
 
-    document.getElementById('tgBtnMid').addEventListener('click', openTelegram);
+    tgBtnMid.addEventListener('click', openTelegram);
+    tgBtnBottom.addEventListener('click', openTelegram);
 
     loginBtn.addEventListener('click', verificarID);
     idInput.addEventListener('keydown',(e)=>{ if(e.key==='Enter') verificarID(); });
 
-    copyPayBtn?.addEventListener('click', ()=>{
-      navigator.clipboard?.writeText(I18N[currentLang].allText);
-      toast(currentLang==='ar'?'تم نسخ التعليمات ✅':'Instructions copied ✅');
+    copyPayBtn.addEventListener('click', ()=>{
+      safeCopy(I18N[currentLang].allText, currentLang==='ar'?'تم نسخ التعليمات ✅':'Instructions copied ✅');
     });
 
     // ===== Functions =====
@@ -332,26 +266,26 @@ For Mauritania: please top up 1900 MRU to continue`
       const t = I18N[lang];
       document.documentElement.lang = lang;
       document.documentElement.dir  = t.dir;
-      onlineText.firstChild.nodeValue = t.online;
-      title.textContent    = t.title;
-      loginBtn.textContent = t.login;
-      payBtn.textContent   = t.pay;
-      document.getElementById('payBtn2')?.querySelector('span')?.textContent = t.payNow;
-      leftTimeLbl.textContent = t.left;
-      copyPayLbl.textContent  = t.copyInst;
-      openTgLbl.textContent   = t.openTg;
-      winnersTitle.textContent= t.winnersTitle;
-      hName.textContent   = t.hName; hCountry.textContent = t.hCountry; hCity.textContent = t.hCity;
-      hDeposit.textContent= t.hDeposit; hEarnings.textContent = t.hEarnings;
-      document.getElementById('faq1').textContent   = t.faq1;
-      document.getElementById('faq1txt').textContent= t.faq1txt;
-      document.getElementById('faq2').textContent   = t.faq2;
-      document.getElementById('faq2txt').textContent= t.faq2txt;
-      document.getElementById('tgBtnTop').textContent = (lang==='ar'?'💬 دعم تيليجرام':'💬 Telegram support');
-      // payment links
-      payBtn.href = PAY_URL; document.getElementById('payBtn2')?.setAttribute('href', PAY_URL);
-      // текст сумм (всегда все страны)
-      document.getElementById('successMsg').textContent = t.allText;
+      if (onlineLbl) onlineLbl.textContent = t.online;
+      if (title) title.textContent    = t.title;
+      if (loginBtn) loginBtn.textContent = t.login;
+      if (payBtn) { payBtn.textContent = t.pay; payBtn.href = PAY_URL; }
+      if (payBtn2) { payBtn2.querySelector('span').textContent = t.payNow; payBtn2.href = PAY_URL; }
+      if (leftTimeLbl) leftTimeLbl.textContent = t.left;
+      if (copyPayLbl) copyPayLbl.textContent  = t.copyInst;
+      if (openTgLbl) openTgLbl.textContent   = t.openTg;
+      if (winnersTitle) winnersTitle.textContent= t.winnersTitle;
+      if (hName) hName.textContent = t.hName;
+      if (hCountry) hCountry.textContent = t.hCountry;
+      if (hCity) hCity.textContent = t.hCity;
+      if (hDeposit) hDeposit.textContent = t.hDeposit;
+      if (hEarnings) hEarnings.textContent = t.hEarnings;
+      const f1=document.getElementById('faq1'), f1t=document.getElementById('faq1txt'),
+            f2=document.getElementById('faq2'), f2t=document.getElementById('faq2txt');
+      if (f1) f1.textContent = t.faq1; if (f1t) f1t.textContent = t.faq1txt;
+      if (f2) f2.textContent = t.faq2; if (f2t) f2t.textContent = t.faq2txt;
+      if (tgBtnTop) tgBtnTop.textContent = (lang==='ar'?'💬 دعم تيليجرام':'💬 Telegram support');
+      if (successMsg) successMsg.textContent = t.allText;
     }
 
     function verificarID(){
@@ -361,11 +295,11 @@ For Mauritania: please top up 1900 MRU to continue`
 
       if(valid){
         idInput.classList.remove('err'); errorMsg.textContent = '';
-        document.getElementById('successBox').style.display = 'block';
+        successBox.style.display = 'block';
         startProgress(); startCountdown(COUNTDOWN_START_SEC);
-        document.getElementById('successBox').scrollIntoView({behavior:'smooth', block:'center'});
+        successBox.scrollIntoView({behavior:'smooth', block:'center'});
       }else{
-        document.getElementById('successBox').style.display = 'none';
+        successBox.style.display = 'none';
         errorMsg.textContent = (currentLang==='ar'?'رقم تعريف غير صالح':'Invalid ID');
         idInput.classList.add('err'); pulse(idInput);
       }
@@ -399,9 +333,10 @@ For Mauritania: please top up 1900 MRU to continue`
 
     function onlinePulse(){
       const base = 21 + Math.floor(Math.random()*20);
-      onlineNum.textContent = String(base);
+      if (onlineNum) onlineNum.textContent = String(base);
     }
     function pulse(el){
+      if (!el || !el.animate) return;
       el.animate([{transform:'scale(1)'},{transform:'scale(1.04)'},{transform:'scale(1)'}],{duration:260});
     }
     function toast(text){
@@ -414,6 +349,73 @@ For Mauritania: please top up 1900 MRU to continue`
       });
       document.body.appendChild(t);
       setTimeout(()=>t.remove(),1400);
+    }
+    async function safeCopy(text, okMsg){
+      try{
+        if (navigator.clipboard && window.isSecureContext){
+          await navigator.clipboard.writeText(text);
+          toast(okMsg);
+        }else{
+          const ta=document.createElement('textarea');
+          ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+          document.body.appendChild(ta); ta.focus(); ta.select();
+          document.execCommand('copy'); document.body.removeChild(ta);
+          toast(okMsg);
+        }
+      }catch(e){ console.warn('Copy failed', e); }
+    }
+
+    // ===== Winners =====
+    function usdToLocal(country, usd){
+      if(country==="MR") return Math.round(usd*RATES.USD_MRU) + " MRU";
+      if(country==="EG") return Math.round(usd*RATES.USD_EGP) + " EGP";
+      return Math.round(usd*RATES.USD_MAD) + " MAD";
+    }
+    function makeWinner(country){
+      const first = FIRST[Math.floor(Math.random()*FIRST.length)];
+      const last  = LAST[Math.floor(Math.random()*LAST.length)];
+      const cityA = CITIES[country]; const city  = cityA[Math.floor(Math.random()*cityA.length)];
+      let depositLocal;
+      if(country==="MR"){ depositLocal = (Math.floor(Math.random()*8)+5)*100 + " MRU"; }
+      else if(country==="EG"){ depositLocal = (Math.floor(Math.random()*10)+3)*100 + " EGP"; }
+      else{ depositLocal = (Math.floor(Math.random()*4)+1)*100 + " MAD"; }
+      const earnUSD = 150 + Math.floor(Math.random()*151);
+      const earnLocal = usdToLocal(country, earnUSD);
+      return {
+        name: `${first} ${last}`,
+        country: country==="MR"?"موريتانيا":country==="EG"?"مصر":"المغرب",
+        city, deposit: depositLocal, earnings: earnLocal
+      };
+    }
+    function buildWinnerRow(w){
+      const row = document.createElement('div');
+      row.className='winner-row';
+      row.innerHTML = `
+        <div><b>${w.name}</b></div>
+        <div>${w.country}</div>
+        <div>${w.city}</div>
+        <div>${w.deposit}</div>
+        <div><b>${w.earnings}</b></div>
+      `;
+      return row;
+    }
+    function seedWinners(){
+      if (!wTicker) return;
+      wTicker.innerHTML='';
+      const countries = ["MR","EG","MA","MR","EG","MA","MR","EG"];
+      for (let i=0;i<countries.length;i++){
+        wTicker.appendChild(buildWinnerRow(makeWinner(countries[i])));
+      }
+    }
+    function rotateWinners(){
+      if (!wTicker || !wTicker.firstElementChild) return;
+      const first = wTicker.firstElementChild;
+      first.animate([{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(-8px)'}],{duration:260});
+      setTimeout(()=>{
+        if (first.parentNode) first.parentNode.removeChild(first);
+        const cc = ["MR","EG","MA"][Math.floor(Math.random()*3)];
+        wTicker.appendChild(buildWinnerRow(makeWinner(cc)));
+      },260);
     }
   </script>
 </body>
